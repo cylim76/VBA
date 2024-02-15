@@ -1,0 +1,41 @@
+Function ExpandArrayDimensions(ArrayToExpand, ArraySource, ArraySource_No)
+
+    ' ArrayToExpand 是目标数组,ArraySource是源数组,ArraySource_No是元数据中的记录序号
+    '本函数将ArraySource中的 第ArraySource_No的记录插入到ArrayToExpand
+    '引用方法  Target_Array = ExpandArrayDimensions(Target_Array, Source_Array, i)
+    '数组的行数不能直接添加,只能动态增加列,本函数进行行列转换后添加列(原数组的行),通过再进行一次行列转换达到增加行的效果.
+    
+    Dim temp_Array
+    
+    If Not IsArray(ArrayToExpand) Then
+    
+        numCols = UBound(ArraySource, 2)
+        ReDim ArrayToExpand(1 To 1, 1 To numCols)
+        
+        For i = 1 To numCols
+            ArrayToExpand(1, i) = ArraySource(ArraySource_No, i)    '
+        Next i
+    Else
+        numRows = UBound(ArrayToExpand, 1) + 1
+        numCols = UBound(ArrayToExpand, 2)
+    
+        temp_Array = Application.Transpose(ArrayToExpand)
+        '数组维度转换
+        ReDim Preserve temp_Array(1 To numCols, 1 To numRows)     '增加维度
+        
+        ArrayToExpand = Application.Transpose(temp_Array)
+        
+        For i = 1 To numCols
+            ArrayToExpand(numRows, i) = ArraySource(ArraySource_No, i)
+        Next i
+        
+    End If
+    
+
+    
+    '数组维度还原
+    ExpandArrayDimensions = ArrayToExpand
+    
+    
+    
+ End Function
